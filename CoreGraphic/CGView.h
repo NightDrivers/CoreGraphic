@@ -8,6 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(NSInteger,CGViewType) {
+    CGViewTypeMiterLimit = 0,
+    CGViewTypeDashLine,
+    CGViewTypeAlpha,
+    CGViewTypeClipToRect,
+    CGViewTypeClipToMask,
+    CGViewTypeColorPattern,
+    CGViewTypeStencilPattern,
+    CGViewTypeGradient,
+    CGViewTypeCount
+};
+
 @interface CGView : UIView
+
+- (instancetype)initWith:(CGViewType)type;
 
 @end
