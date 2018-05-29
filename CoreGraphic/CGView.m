@@ -64,6 +64,12 @@ void MyDrawColoredPattern(void *info, CGContextRef myContext)
     CGContextFillRect (myContext, myRect4);
 }
 
+void MyPDFDictionaryApplierFunction(const char *  key,
+                                       CGPDFObjectRef  value, void * __nullable info) {
+    
+    NSLog(@"%s-%s",key,info);
+}
+
 @implementation CGView {
     
     CGViewType _type;
@@ -74,6 +80,7 @@ void MyDrawColoredPattern(void *info, CGContextRef myContext)
     self = [super init];
     if (self) {
         _type = type;
+        self.layer.opaque = false;
     }
     return self;
 }
@@ -98,16 +105,24 @@ void MyDrawColoredPattern(void *info, CGContextRef myContext)
     //另一种渐变色绘制方法，但比CGGradientRef复杂，需要自定义颜色渐变相关方法
     CGContextDrawShading(ctx, NULL);
     //上次看到--
-    CGContextSetShadowWithColor(ctx, CGSizeMake(3, 3), 1, [UIColor whiteColor].CGColor);
+    CGContextDrawShading(ctx, NULL);
+}
+
+- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx {
+    
+    NSLog(@"%p--%p",self,layer);
+    [super drawLayer:layer inContext:ctx];
 }
 
 - (void)drawRect:(CGRect)rect {
-    
+
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     UIColor *white = [UIColor whiteColor];
     CGContextSetFillColorWithColor(ctx, white.CGColor);
     CGContextFillRect(ctx, rect);
-    
+//    CGAffineTransform current = CGContextGetCTM(ctx);
+//    NSLog(@"%@",NSStringFromCGAffineTransform(current));
+
     switch (_type) {
         case CGViewTypeMiterLimit:
             [self cg_MiterLimitTest:ctx Rect:rect];
@@ -133,9 +148,61 @@ void MyDrawColoredPattern(void *info, CGContextRef myContext)
         case CGViewTypeGradient:
             [self cg_gradientTest:ctx Rect:rect];
             break;
+        case CGViewTypeTransparencyLayers:
+            [self cg_transparencyLayersTest:ctx Rect:rect];
+            break;
+        case CGViewTypePDF:
+            [self cg_pdfTest:ctx Rect:rect];
+            break;
         default:
             break;
     }
+}
+
+- (void)cg_pdfTest:(CGContextRef)ctx Rect:(CGRect)rect {
+    
+    CGContextSetFillColorWithColor(ctx, [UIColor colorWithWhite:0.9 alpha:1].CGColor);
+    CGContextFillRect(ctx, rect);
+    
+    CGContextSetShadowWithColor(ctx, CGSizeMake(0, -3), 5, [UIColor grayColor].CGColor);
+    
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"temp1" ofType:@"pdf"];
+    NSURL *url = [NSURL fileURLWithPath:path];
+    CGPDFDocumentRef document = CGPDFDocumentCreateWithURL((__bridge CFURLRef)url);
+    size_t count = CGPDFDocumentGetNumberOfPages(document);
+    NSLog(@"页数：%lu",count);
+    //从1开始
+    CGPDFPageRef page = CGPDFDocumentGetPage(document, 1);
+    CGAffineTransform transform = CGPDFPageGetDrawingTransform(page, kCGPDFMediaBox, rect, 0, true);
+    CGContextSaveGState(ctx);
+    CGContextTranslateCTM(ctx, 0, rect.size.height);
+    CGContextScaleCTM(ctx, 1, -1);
+    CGContextConcatCTM(ctx, transform);
+    CGContextDrawPDFPage(ctx, page);
+    CGContextRestoreGState(ctx);
+    CGPDFPageRelease(page);
+}
+
+- (void)cg_transparencyLayersTest:(CGContextRef)ctx Rect:(CGRect)rect {
+    
+    //transparencyLayers 能将多个对象合并为同一个图形，合并后的结果会被视为单个对象，这个通常用于为叠加的涂层提供组合的阴影效果
+    CGSize shadowOffset = CGSizeMake(3, -3);
+    CGContextSetShadowWithColor(ctx, shadowOffset, 10, [UIColor blackColor].CGColor);
+    CGContextSetFillColorWithColor(ctx, [UIColor redColor].CGColor);
+    CGContextFillEllipseInRect(ctx, CGRectMake(100, 100, 100, 100));
+    CGContextSetFillColorWithColor(ctx, [UIColor greenColor].CGColor);
+    CGContextFillEllipseInRect(ctx, CGRectMake(150, 100, 100, 100));
+    CGContextSetFillColorWithColor(ctx, [UIColor blueColor].CGColor);
+    CGContextFillEllipseInRect(ctx, CGRectMake(125, 150, 100, 100));
+    
+    CGContextBeginTransparencyLayer(ctx, NULL);
+    CGContextSetFillColorWithColor(ctx, [UIColor redColor].CGColor);
+    CGContextFillEllipseInRect(ctx, CGRectMake(100, 400, 100, 100));
+    CGContextSetFillColorWithColor(ctx, [UIColor greenColor].CGColor);
+    CGContextFillEllipseInRect(ctx, CGRectMake(150, 400, 100, 100));
+    CGContextSetFillColorWithColor(ctx, [UIColor blueColor].CGColor);
+    CGContextFillEllipseInRect(ctx, CGRectMake(125, 450, 100, 100));
+    CGContextEndTransparencyLayer(ctx);
 }
 
 - (void)cg_gradientTest:(CGContextRef)ctx Rect:(CGRect)rect {
@@ -145,7 +212,8 @@ void MyDrawColoredPattern(void *info, CGContextRef myContext)
     CGFloat location[] = {0,1};
     CGGradientRef gradient = CGGradientCreateWithColorComponents(colorSpace, components, location, 2);
 //    CGContextDrawLinearGradient(ctx, gradient, CGPointMake(0, 0), CGPointMake(rect.size.width, rect.size.height), 0);
-    CGContextDrawRadialGradient(ctx, gradient, CGPointMake(50, 50), 50, CGPointMake(rect.size.width-100, rect.size.height - 100), 100, 0);
+//    CGContextDrawRadialGradient(ctx, gradient, CGPointMake(50, 50), 50, CGPointMake(rect.size.width-100, rect.size.height - 100), 100, 0);
+    CGContextDrawRadialGradient(ctx, gradient, CGPointMake(rect.size.width/2, rect.size.height/2), 50, CGPointMake(rect.size.width/2, rect.size.height/2), 150, 0);
     CGColorSpaceRelease(colorSpace);
     CGGradientRelease(gradient);
 }

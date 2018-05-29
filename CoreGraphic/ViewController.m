@@ -55,6 +55,8 @@
     [self.demoTypes addObject:[[CGDemoType alloc] initWith:@"颜色模版" type:CGViewTypeColorPattern]];
     [self.demoTypes addObject:[[CGDemoType alloc] initWith:@"图案模版" type:CGViewTypeStencilPattern]];
     [self.demoTypes addObject:[[CGDemoType alloc] initWith:@"渐变色" type:CGViewTypeGradient]];
+    [self.demoTypes addObject:[[CGDemoType alloc] initWith:@"透明层" type:CGViewTypeTransparencyLayers]];
+    [self.demoTypes addObject:[[CGDemoType alloc] initWith:@"PDF" type:CGViewTypePDF]];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {

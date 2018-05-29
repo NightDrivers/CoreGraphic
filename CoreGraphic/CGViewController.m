@@ -12,6 +12,10 @@
 
 @property (nonatomic, assign) CGViewType type;
 
+@property (nonatomic, strong) CGView *temp;
+
+@property (nonatomic, strong) CGView *temp1;
+
 @end
 
 @implementation CGViewController
@@ -28,12 +32,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
     self.view.backgroundColor = [UIColor whiteColor];
-    CGView *temp = [[CGView alloc] initWith:self.type];
-    temp.frame = self.view.bounds;
-    temp.backgroundColor = [UIColor clearColor];
-    temp.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    [self.view addSubview:temp];
+    
+    self.temp = [[CGView alloc] initWith:self.type];
+    self.temp.backgroundColor = [[UIColor cyanColor] colorWithAlphaComponent:0.5];
+    self.temp.frame = self.view.bounds;
+    self.temp.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self.view addSubview:self.temp];
 }
 
 @end
