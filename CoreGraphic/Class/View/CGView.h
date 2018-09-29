@@ -18,7 +18,9 @@ typedef NS_ENUM(NSInteger,CGViewType) {
     CGViewTypeStencilPattern,
     CGViewTypeGradient,
     CGViewTypeTransparencyLayers,
-    CGViewTypePDF
+    CGViewTypePDF,
+    CGViewTypeBlendMode,
+    CGViewTypeAnimation
 };
 
 @interface CGView : UIView

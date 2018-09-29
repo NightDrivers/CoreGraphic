@@ -23,6 +23,8 @@
 		6353968A20AD4E41007C82DC /* 4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6353968620AD4E41007C82DC /* 4.jpg */; };
 		6357783220B2AF8C0044DB25 /* CGViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6357783120B2AF8C0044DB25 /* CGViewController.m */; };
 		6357783620B2C88C0044DB25 /* temp1.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6357783520B2C88C0044DB25 /* temp1.pdf */; };
+		636D1DB720E5DD7D004E56D1 /* UIImage+rgbImages.m in Sources */ = {isa = PBXBuildFile; fileRef = 636D1DB620E5DD7D004E56D1 /* UIImage+rgbImages.m */; };
+		63BA4C1920E4E03B0043DFF6 /* UIColor+singleColorImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 63BA4C1820E4E03B0043DFF6 /* UIColor+singleColorImage.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +71,10 @@
 		6357783020B2AF8C0044DB25 /* CGViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CGViewController.h; sourceTree = "<group>"; };
 		6357783120B2AF8C0044DB25 /* CGViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CGViewController.m; sourceTree = "<group>"; };
 		6357783520B2C88C0044DB25 /* temp1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = temp1.pdf; sourceTree = "<group>"; };
+		636D1DB520E5DD7D004E56D1 /* UIImage+rgbImages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+rgbImages.h"; sourceTree = "<group>"; };
+		636D1DB620E5DD7D004E56D1 /* UIImage+rgbImages.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+rgbImages.m"; sourceTree = "<group>"; };
+		63BA4C1720E4E03B0043DFF6 /* UIColor+singleColorImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+singleColorImage.h"; sourceTree = "<group>"; };
+		63BA4C1820E4E03B0043DFF6 /* UIColor+singleColorImage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIColor+singleColorImage.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,25 +125,17 @@
 		6353964B20AD4B04007C82DC /* CoreGraphic */ = {
 			isa = PBXGroup;
 			children = (
+				6356479D20D2588D00BC69C2 /* Resource */,
+				6356479A20D2585800BC69C2 /* Class */,
 				6353964C20AD4B04007C82DC /* AppDelegate.h */,
 				6353964D20AD4B04007C82DC /* AppDelegate.m */,
 				6353964F20AD4B04007C82DC /* ViewController.h */,
 				6353965020AD4B04007C82DC /* ViewController.m */,
-				6357783520B2C88C0044DB25 /* temp1.pdf */,
-				6353968320AD4E41007C82DC /* 2.jpg */,
-				6353968520AD4E41007C82DC /* 3.jpg */,
-				6353968620AD4E41007C82DC /* 4.jpg */,
-				6353968420AD4E41007C82DC /* 5.jpg */,
-				6353968120AD4C8D007C82DC /* 1.jpg */,
 				6353965220AD4B04007C82DC /* Main.storyboard */,
 				6353965520AD4B04007C82DC /* Assets.xcassets */,
 				6353965720AD4B04007C82DC /* LaunchScreen.storyboard */,
 				6353965A20AD4B04007C82DC /* Info.plist */,
 				6353965B20AD4B04007C82DC /* main.m */,
-				6353967E20AD4B35007C82DC /* CGView.h */,
-				6353967F20AD4B35007C82DC /* CGView.m */,
-				6357783020B2AF8C0044DB25 /* CGViewController.h */,
-				6357783120B2AF8C0044DB25 /* CGViewController.m */,
 			);
 			path = CoreGraphic;
 			sourceTree = "<group>";
@@ -158,6 +156,50 @@
 				6353967220AD4B04007C82DC /* Info.plist */,
 			);
 			path = CoreGraphicUITests;
+			sourceTree = "<group>";
+		};
+		6356479A20D2585800BC69C2 /* Class */ = {
+			isa = PBXGroup;
+			children = (
+				6356479C20D2587900BC69C2 /* View */,
+				6356479B20D2586600BC69C2 /* Controller */,
+			);
+			path = Class;
+			sourceTree = "<group>";
+		};
+		6356479B20D2586600BC69C2 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6357783020B2AF8C0044DB25 /* CGViewController.h */,
+				6357783120B2AF8C0044DB25 /* CGViewController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		6356479C20D2587900BC69C2 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				6353967E20AD4B35007C82DC /* CGView.h */,
+				6353967F20AD4B35007C82DC /* CGView.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6356479D20D2588D00BC69C2 /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				6357783520B2C88C0044DB25 /* temp1.pdf */,
+				6353968320AD4E41007C82DC /* 2.jpg */,
+				6353968520AD4E41007C82DC /* 3.jpg */,
+				6353968620AD4E41007C82DC /* 4.jpg */,
+				6353968420AD4E41007C82DC /* 5.jpg */,
+				6353968120AD4C8D007C82DC /* 1.jpg */,
+				63BA4C1720E4E03B0043DFF6 /* UIColor+singleColorImage.h */,
+				63BA4C1820E4E03B0043DFF6 /* UIColor+singleColorImage.m */,
+				636D1DB520E5DD7D004E56D1 /* UIImage+rgbImages.h */,
+				636D1DB620E5DD7D004E56D1 /* UIImage+rgbImages.m */,
+			);
+			path = Resource;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -299,7 +341,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				636D1DB720E5DD7D004E56D1 /* UIImage+rgbImages.m in Sources */,
 				6357783220B2AF8C0044DB25 /* CGViewController.m in Sources */,
+				63BA4C1920E4E03B0043DFF6 /* UIColor+singleColorImage.m in Sources */,
 				6353968020AD4B35007C82DC /* CGView.m in Sources */,
 				6353965120AD4B04007C82DC /* ViewController.m in Sources */,
 				6353965C20AD4B04007C82DC /* main.m in Sources */,

@@ -57,6 +57,8 @@
     [self.demoTypes addObject:[[CGDemoType alloc] initWith:@"渐变色" type:CGViewTypeGradient]];
     [self.demoTypes addObject:[[CGDemoType alloc] initWith:@"透明层" type:CGViewTypeTransparencyLayers]];
     [self.demoTypes addObject:[[CGDemoType alloc] initWith:@"PDF" type:CGViewTypePDF]];
+    [self.demoTypes addObject:[[CGDemoType alloc] initWith:@"动画测试" type:CGViewTypeAnimation]];
+    [self.demoTypes addObject:[[CGDemoType alloc] initWith:@"渲染模式测试" type:CGViewTypeBlendMode]];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {

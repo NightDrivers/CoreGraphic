@@ -8,6 +8,8 @@
 
 #import "CGView.h"
 #import <CoreGraphics/CoreGraphics.h>
+#import "UIColor+singleColorImage.h"
+#import "UIImage+rgbImages.h"
 #define H_PATTERN_SIZE 16
 #define V_PATTERN_SIZE 18
 #define PSIZE 16    // size of the pattern cell
@@ -70,6 +72,22 @@ void MyPDFDictionaryApplierFunction(const char *  key,
     NSLog(@"%s-%s",key,info);
 }
 
+@interface CGView ()
+
+@property (nonatomic, strong) CADisplayLink *displayLink;
+
+@property (nonatomic, strong) UIImage *redImage;
+
+@property (nonatomic, strong) UIImage *greenImage;
+
+@property (nonatomic, strong) UIImage *blueImage;
+
+@property (nonatomic, strong) UIImage *rgImage;
+
+@property (nonatomic, strong) UIImage *image;
+
+@end
+
 @implementation CGView {
     
     CGViewType _type;
@@ -81,6 +99,18 @@ void MyPDFDictionaryApplierFunction(const char *  key,
     if (self) {
         _type = type;
         self.layer.opaque = false;
+        if (type >= CGViewTypeAnimation) {
+            
+            self.image = [UIImage imageNamed:@"1.jpg"];
+            NSArray<UIImage *> *images = [self.image ymcImages];
+            self.redImage = images[0];
+            self.greenImage = images[1];
+            self.blueImage = images[2];
+            self.rgImage = [self.image ymImages][1];
+            
+            self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(setNeedsDisplay)];
+            [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+        }
     }
     return self;
 }
@@ -108,11 +138,11 @@ void MyPDFDictionaryApplierFunction(const char *  key,
     CGContextDrawShading(ctx, NULL);
 }
 
-- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx {
-    
-    NSLog(@"%p--%p",self,layer);
-    [super drawLayer:layer inContext:ctx];
-}
+//- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx {
+//
+//    NSLog(@"%p--%p",self,layer);
+//    [super drawLayer:layer inContext:ctx];
+//}
 
 - (void)drawRect:(CGRect)rect {
 
@@ -154,9 +184,99 @@ void MyPDFDictionaryApplierFunction(const char *  key,
         case CGViewTypePDF:
             [self cg_pdfTest:ctx Rect:rect];
             break;
+        case CGViewTypeAnimation:
+            [self cg_animationTest:ctx Rect:rect];
+            break;
+        case CGViewTypeBlendMode:
+            [self cg_blendmodeTest:ctx Rect:rect];
+            break;
         default:
             break;
     }
+}
+
+- (void)cg_blendmodeTest:(CGContextRef)ctx Rect:(CGRect)rect {
+    
+    //kCGBlendModePlusLighter 加亮，每个色值亮度相加，上限1
+    //kCGBlendModeLighten 每个色值取最亮值
+//    UIImage *red = [[UIColor redColor] image];
+//    UIImage *white = [[UIColor whiteColor] image];
+//    UIImage *black = [[UIColor blackColor] image];
+//    UIImage *blue = [[UIColor blueColor] image];
+//    UIImage *green = [[UIColor greenColor] image];
+//    UIImage *cyan = [[UIColor cyanColor] image];
+//    UIImage *magenta = [[UIColor magentaColor] image];
+//    UIImage *lightCyan = [[[UIColor alloc] initWithRed:0 green:0.5 blue:0.5 alpha:1] image];
+//    UIImage *lightYellow = [[[UIColor alloc] initWithRed:0.5 green:0.5 blue:0 alpha:1] image];
+//    UIImage *gray = [[UIColor colorWithRed:84/256.0 green:84/256.0 blue:84/256.0 alpha:1] image];
+//    UIImage *lightgray = [[UIColor colorWithRed:168/256.0 green:168/256.0 blue:168/256.0 alpha:1] image];
+//    CGContextDrawImage(ctx, rect, lightYellow.CGImage);
+//    CGContextSetBlendMode(ctx, kCGBlendModePlusLighter);
+//    CGContextDrawImage(ctx, rect, cyan.CGImage);
+//    CGContextDrawImage(ctx, rect, gray.CGImage);
+//    CGContextDrawImage(ctx, rect, gray.CGImage);
+}
+
+- (void)cg_animationTest:(CGContextRef)ctx Rect:(CGRect)rect {
+    
+    static CFAbsoluteTime start;
+    static CFAbsoluteTime end;
+    static CFAbsoluteTime current;
+    static BOOL redComplete = false;
+    static BOOL greenComplete = false;
+    static BOOL blueComplete = false;
+    static CGFloat clipHeight = 0;
+    CFAbsoluteTime temp = CFAbsoluteTimeGetCurrent();
+    NSLog(@"帧率:%lf",1/(temp - current));
+    current = temp;
+    CGContextSaveGState(ctx);
+    CGContextTranslateCTM(ctx, 0, rect.size.height);
+    CGContextScaleCTM(ctx, 1, -1);
+    
+    if (redComplete) {
+        if (redComplete && greenComplete) {
+            if (redComplete && greenComplete && blueComplete) {
+                CGContextDrawImage(ctx, rect, self.image.CGImage);
+                static dispatch_once_t onceToken;
+                dispatch_once(&onceToken, ^{
+                    end = CFAbsoluteTimeGetCurrent();
+                    NSLog(@"%lf",end - start);
+                });
+                [self.displayLink removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+                self.displayLink = nil;
+            }else {
+                CGContextDrawImage(ctx, rect, self.rgImage.CGImage);
+                CGContextClipToRect(ctx, CGRectMake(0, rect.size.height - clipHeight, rect.size.width, clipHeight));
+                CGContextDrawImage(ctx, rect, self.image.CGImage);
+                if (clipHeight >= rect.size.height) {
+                    clipHeight = 0;
+                    blueComplete = true;
+                }
+            }
+        }else {
+            CGContextDrawImage(ctx, rect, self.redImage.CGImage);
+            CGContextClipToRect(ctx, CGRectMake(0, rect.size.height - clipHeight, rect.size.width, clipHeight));
+            CGContextDrawImage(ctx, rect, self.rgImage.CGImage);
+            if (clipHeight >= rect.size.height) {
+                clipHeight = 0;
+                greenComplete = true;
+            }
+        }
+    }else {
+        if (clipHeight == 0) {
+            start = CFAbsoluteTimeGetCurrent();
+        }
+        CGContextClipToRect(ctx, CGRectMake(0, rect.size.height - clipHeight, rect.size.width, clipHeight));
+        CGContextDrawImage(ctx, rect, self.redImage.CGImage);
+        if (clipHeight >= rect.size.height) {
+            clipHeight = 0;
+            redComplete = true;
+        }
+    }
+    if (!redComplete || !greenComplete || !blueComplete) {
+        clipHeight += rect.size.height/30;
+    }
+    CGContextRestoreGState(ctx);
 }
 
 - (void)cg_pdfTest:(CGContextRef)ctx Rect:(CGRect)rect {
