@@ -20,7 +20,6 @@ typedef NS_ENUM(NSInteger,CGViewType) {
     CGViewTypeTransparencyLayers,
     CGViewTypePDF,
     CGViewTypeBlendMode,
-    CGViewTypeAnimation
 };
 
 @interface CGView : UIView
